@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ sender }}'s Chats</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .card {
+            margin-bottom: 1rem;
+        }
+        .card-body {
+            background-color: #ffffff;
+            border-radius: 0.25rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+        .text-muted {
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Welcome Back {{ sender }} 👋</h1>
+        <div id="display"></div>
+    </div>
+
+    <script>
+        $(document).ready(function(){
+            setInterval(function(){
+                $.ajax({
+                    type: 'GET',
+                    url : "/getRooms/{{ sender }}/",
+                    success: function(response){
+                        $("#display").empty();
+                        for (let key in response.rooms)
+                        {
+                            let changedName = response.rooms[key].name;
+                            changedName = changedName.replace('{{ sender }}', '').replace(':;:', '');
+                            let temp = `
+                            <div class='card'>
+                                <div class='card-body'>
+                                    <b><a href="/${response.rooms[key].name}">${changedName}</a></b>
+                                    <p class="text-danger">${response.rooms[key].isBlocked ? 'BLOCKED' : ''}</p>
+                                </div>
+                            </div>`;
+                            $("#display").append(temp);
+                        }
+                    },
+                    error: function(response){
+                        alert('Cannot fetch chats');
+                    }
+                });
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

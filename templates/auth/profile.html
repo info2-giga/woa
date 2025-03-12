@@ -1,0 +1,110 @@
+{% extends 'assets/base.html' %}
+{% load static %}
+{% block title %}
+    {{ user_profile.username }}'s Profile
+{% endblock %}
+{% block content %}
+    <!--- ONCEnReVeluv --->
+    <div class="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <!-- Profil Header -->
+        <div class="flex flex-col items-center sm:flex-row sm:items-start sm:gap-8">
+            <div class="w-24 h-24 sm:w-32 sm:h-32">
+                {% if user_profile.profile_image %}
+                    <img class="w-full h-full rounded-full object-cover lazy-load"
+                         src="{% static 'images/placeholder-2.jpg' %}"
+                         data-src="{{ user_profile.profile_image.url }}"
+                         alt="Profile Picture">
+                {% else %}
+                    <img
+                         src="{% static 'images/placeholder-2.jpg' %}"
+                         class="w-full h-full rounded-full object-cover lazy-load"
+                         data-src="{% static '/images/default.jpg' %}"
+                         alt="Default Profile Picture">
+                {% endif %}
+            </div>
+            <div class="text-center sm:text-left mt-4 sm:mt-0">
+                <h1 class="text-2xl font-bold block">{{ user_profile.username }}</h1>
+                <p class="text-gray-600 block">{{ user_profile.bio | default:"No bio available." }}</p>
+
+                <small>Online | Last active: {{ user_profile.date_joined|date:"d. M Y" }}</small>
+                <p>Following: {{ following_count }}</p>
+                <p>Joined: {{ user_profile.date_joined|date:"d. M Y" }}</p>
+
+                {% if user != user_profile %}
+                    <div class="mt-4 flex">
+                        {% if is_following %}
+                            <a href="{% url 'unfollow_user' user_profile.username %}"
+                               class="mr-3 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600">
+                               Unfollow
+                            </a>
+                        {% else %}
+                            <a href="{% url 'follow_user' user_profile.username %}"
+                               class="mr-3 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                               Follow
+                            </a>
+                        {% endif %}
+                        <!--- TODO: Implement the chat feature-->
+                        <a href="/chatlist/checkviewGet?room_name={{ user_profile.username }}:;:{{ request.user.username }}&username={{ request.user.username }}"
+                        class="ml-3 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                           Message
+                        </a>
+                    </div>
+                {% else %}
+                    <a href="{% url 'edit_profile' %}"
+                       class="bg-twicePink block hover:bg-opacity-85 text-white font-bold py-3 px-2 mb-2 rounded">
+                       Edit Profile
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+
+
+    <!-- Beiträge des Nutzers -->
+<div class="space-y-6">
+    {% for post in posts %}
+        {% if post %}
+                <div class="bg-gray-50 dark:bg-gray-800 rounded-lg shadow p-6">
+        <!-- Titel des Beitrags -->
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            <a href="{% url 'post_detail' post.id %}" class="hover:underline">
+                {{ post.title }}
+            </a>
+        </h2>
+        <!-- Textvorschau (gekürzt) -->
+        <p class="text-gray-700 dark:text-gray-400 truncate">
+            {{ post.content|truncatewords:20 }}
+        </p>
+        <!-- Medienvorschau -->
+        {% if post.media.exists %}
+        <div class="mt-4">
+            {% with post.media.first as media %}
+            {% if media.image %}
+            <a href="{% url 'post_detail' post.id %}">
+                <img src="{{ media.image.url }}" 
+                     alt="Preview Image" 
+                     class="w-full h-40 object-cover rounded-lg">
+            </a>
+            {% elif media.video %}
+            <a href="{% url 'post_detail' post.id %}">
+                <video controls class="w-full h-40 object-cover rounded-lg">
+                    <source src="{{ media.video.url }}" type="video/mp4">
+                </video>
+            </a>
+            {% endif %}
+            {% endwith %}
+        </div>
+        {% endif %}
+    </div>
+        {% endif %}
+        {% empty %}
+        <div class="text-center">
+            <img src="{% static 'images/no-entries.gif' %}" alt="No entries" class="mx-auto h-40 w-auto">
+            <p class="text-gray-600">Sorry, no entries available.</p>
+        </div>
+    
+    {% endfor %}
+    
+</div>
+</div>
+{% endblock %}

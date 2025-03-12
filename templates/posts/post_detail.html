@@ -1,0 +1,68 @@
+{% extends 'assets/base.html' %}
+{% block title %}
+    Post - Entry
+{% endblock %}
+{% block content %}
+
+<div class="max-w-3xl mx-auto p-6 bg-gray-100 shadow-md rounded-md mt-10">
+    <h1 class="text-3xl font-bold text-gray-800 mb-4">{{ post.title }}</h1>
+    <p class="text-gray-600 mb-4">By <span class="text-gray-800 font-semibold">{{ post.author }}</span> on {{ post.created_at|date:"F j, Y" }}</p>
+
+    <div class="mb-6">
+        <p class="text-gray-700">{{ post.content }}</p>
+    </div>
+
+    {% if post.media.exists %}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            {% for media_item in post.media.all %}
+                {% if media_item.image %}
+                    <img src="{{ media_item.image.url }}" alt="Post Image" class="w-full h-auto rounded-md">
+                {% elif media_item.video %}
+                    <video controls class="w-full rounded-md">
+                        <source src="{{ media_item.video.url }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="flex space-x-4 items-center">
+        <form method="POST" action="{% url 'like_post' post.id %}">
+            {% csrf_token %}
+            <p>Not working</p>
+            <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700">
+                {% if user in post.likes.all %}
+                    Unlike
+                {% else %}
+                    Like
+                {% endif %}
+                ({{ post.likes.count }})
+            </button>
+        </form>
+        <p>Not working</p>
+        <a href="#comments-section" class="text-blue-600 hover:underline">Comments ({{ post.comments.count }})</a>
+    </div>
+</div>
+
+
+<script>
+    document.getElementById('like-btn').addEventListener('click', function () {
+        const postId = this.getAttribute('data-post-id');
+        fetch(`/post/${postId}/like/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            this.innerText = data.liked ? 'Unlike' : 'Like';
+            document.querySelector('span').innerText = `${data.like_count} likes`;
+        });
+    });
+</script>
+
+{% endblock %}
+
+

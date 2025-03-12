@@ -1,0 +1,44 @@
+{% extends 'assets/base.html' %}
+{% block title %}
+    Post - Create
+{% endblock %}
+{% block content %}
+    <div class="max-w-2xl mx-auto p-6 bg-gray-100 shadow-md rounded-md mt-10 text-black">
+    <h1 class="text-2xl font-bold text-gray-800 mb-6">Create a New Post</h1>
+    <form method="POST" enctype="multipart/form-data" class="space-y-4">
+        {% csrf_token %}
+        
+        <div class="space-y-2">
+            <label for="id_title" class="block text-gray-700 font-medium">Title</label>
+            {{ post_form.title }}
+        </div>
+
+        <div class="space-y-2">
+            <label for="id_content" class="block text-gray-700 font-medium">Content</label>
+            {{ post_form.content }}
+        </div>
+
+        <div class="space-y-2">
+            <p>Still not working</p>
+            <label for="id_tags" class="block text-gray-700 font-medium">Tags</label>
+            {{ post_form.tags }}
+        </div>
+        <p>You can choose to upload one media: An image or a video</p>
+        <div class="space-y-2">
+            <label for="id_image" class="block text-gray-700 font-medium">Upload Image</label>
+            {{ media_form.image }}
+        </div>
+
+        <div class="space-y-2">
+            <label for="id_video" class="block text-gray-700 font-medium">Upload Video</label>
+            {{ media_form.video }}
+        </div>
+
+        <button type="submit" class="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700">
+            Create Post
+        </button>
+    </form>
+</div>
+{% endblock %}
+
+

@@ -1,0 +1,149 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <title>World of Adventures (not World of Warcraft) - {% block title %}{% endblock %}</title>
+</head>
+<body class="bg-gray-100 font-main">
+
+    <main {% if request.user.is_authenticated %} class="flex h-screen bg-black text-white" {% endif %}>
+        {% if request.user.is_authenticated %}
+            <nav
+                    class="bg-black fixed md:w-60 md:h-full bottom-0 md:bottom-auto md:fixed md:left-0 w-full md:p-4 p-2 flex md:flex-col justify-around items-center md:items-start text-sm"
+                >
+                    <div class="hidden md:block mb-6 text-2xl font-bold px-4 font-giga">
+                        <a href="/">World of Adventures</a>
+                    </div>
+                    <ul class="flex md:flex-col w-full justify-evenly md:justify-start md:space-y-6">
+                        <li>
+                            <a href="/" class="flex items-center space-x-3 md:px-4 hover:text-gray-300">
+                                <span class="material-icons">home</span>
+                                <span class="hidden md:inline">Home</span>
+                            </a>
+                        </li>
+                        <!--- TODO: Add Chat later --->
+                        <li>
+                            <a href="/search" class="flex items-center space-x-3 md:px-4 hover:text-gray-300">
+                                <span class="material-icons">search</span>
+                                <span class="hidden md:inline">Search</span>
+                            </a>
+                        </li>
+                        <!--- TODO: Add Chat later --->
+                        <li>
+                            <a href="/chatlist/{{ request.user.username }}" class="flex items-center space-x-3 md:px-4 hover:text-gray-300">
+                                <span class="material-icons">chat</span>
+                                <span class="hidden md:inline">Chat</span>
+                            </a>
+                        </li>
+                        <!--- TODO: Add Post later --->
+                        <li>
+                            <a href="{% url 'create_post' %}" class="flex items-center space-x-3 md:px-4 hover:text-gray-300">
+                                <span class="material-icons">add_box</span>
+                                <span class="hidden md:inline">Create</span>
+                            </a>
+                        </li>
+                        <!--- TODO: Add Trip later --->
+                        <li>
+                            <a href="/create" class="flex items-center space-x-3 md:px-4 hover:text-gray-300">
+                                <span class="material-icons">flight_takeoff</span>
+                                <span class="hidden md:inline">Trip</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'logout' %}" class="flex items-center space-x-3 md:px-4 hover:text-gray-300">
+                                <span class="material-icons">exit_to_app</span>
+                                <span class="hidden md:inline">Logout</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/profile/{{ request.user.username }}" class="flex items-center space-x-3 md:px-4 hover:text-gray-300">
+                                {% if request.user.profile_image.url != None %}
+                                    <img src="{% static 'images/placeholder-2.jpg' %}" data-src="{{ request.user.profile_image.url }}" alt="Profil" class="w-8 h-8 rounded-full lazy-load">
+                                {% else %}
+                                    <img src="{% static 'images/placeholder-2.jpg' %}" data-src="{% static 'images/placeholder-2.jpg' %}" alt="Profil" class="w-8 h-8 rounded-full lazy-load">
+                                {% endif %}
+                                <span class="hidden md:inline">Profil</span>
+                            </a>
+                        </li>
+
+                    </ul>
+                </nav>
+
+        {% endif %}
+
+        <section {% if request.user.is_authenticated %} class="flex-1 flex justify-center items-start p-4 md:ml-60 overflow-auto" {% endif %}>
+            {% block content %}
+                <!--ReVeluv-->
+            {% endblock %}
+        </section>
+
+
+        {% if request.user.is_authenticated %}
+        <aside class="hidden lg:block lg:w-80 p-4 bg-black fixed right-0 h-full">
+        <!-- Profilbereich -->
+        <div class="flex items-center space-x-4 mb-8">
+            <a href="/profile/{{ request.user.username }}">
+                {% if request.user.profile_image.url != None %}
+                    <img src="{% static 'images/placeholder-2.jpg' %}" data-src="{{ request.user.profile_image.url }}" alt="Profil" class="w-12 h-12 rounded-full object-cover lazy-load">
+                {% else %}
+                    <img src="{% static 'images/placeholder-2.jpg' %}" data-src="{% static 'images/placeholder-2.jpg' %}" alt="Profil" class="w-12 h-12 rounded-full object-cover lazy-load">
+                {% endif %}
+            </a>
+            <div>
+                <a href="/profile/{{ request.user.username }}">
+                    <p class="font-bold">{{ request.user.username }}</p>
+                </a>
+                <p class="text-gray-400 text-sm">{{ request.user.username }}</p>
+            </div>
+
+        </div>
+
+        <div>
+            <h2 class="font-bold text-gray-300 mb-4">Some users:</h2>
+            <ul class="space-y-4">
+                 {% for gyatt in suggested_users %}
+                    <li class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-4">
+                            <a href="/profile/{{ gyatt.username }}" title="{{ gyatt.username }}">
+                                <img
+                                    src="{% static 'images/placeholder-2.jpg' %}"
+                                    data-src="{% if gyatt.profile_image %}{{ gyatt.profile_image.url }}{% else %}/static/images/default.jpg{% endif %}"
+                                    alt="{{ gyatt.username }}"
+                                    class="w-10 h-10 rounded-full object-cover lazy-load"
+                                />
+                            </a>
+                            <div>
+                                <a href="/profile/{{ gyatt.username }}" title="{{ gyatt.username }}">
+                                    <p class="text-white font-bold">{{ gyatt.username }}</p>
+                                </a>
+                                <p class="text-gray-400 text-sm">Recommended for you</p>
+                            </div>
+                            <!--- TODO: Add toggle follow/unfollow later --->
+                            <button class="follow-btn px-4 py-1 text-white bg-blue-500 rounded hover:bg-blue-600">
+                                +
+                            </button>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-8 text-gray-500 text-sm">
+            <p class="mt-2">&copy; 2024 World of Adventures</p>
+        </footer>
+    </aside>
+        {% endif %}
+    </main>
+    <script>
+
+    </script>
+</body>
+<script src="{% static 'js/lazyLoad.js' %}"></script>
+</html>

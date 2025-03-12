@@ -1,0 +1,31 @@
+{% extends 'assets/base.html' %}
+{% load static %}
+{% block title %}
+    Login
+{% endblock %}
+{% block content %}
+    <div class="h-screen relative">
+        <img loading="lazy" class="absolute top-0 left-0 h-full w-full object-cover" src="{% static 'images/background-placeholder.jpg' %}" alt="Background Placeholder">
+        <div class="container mx-auto p-4 flex flex-col md:flex-row justify-center items-center translateY-plus50 bg-gray-200 rounded-3xl">
+            <div class="yeri font-main">
+                <h2 class="text-center text-3xl font-bold mb-8 font-giga">Login</h2>
+                <img src="{% static 'images/login.gif' %}" class="w-72 m-2" alt="Login - UwU - TWICE">
+
+                <form method="POST" class="mb-4 mt-2">
+                    {% csrf_token %}
+                    {% for skibidi in form %}
+                        <div class="mb-3">
+                            <label for="{{ skibidi.label }}">{{ skibidi.label }}:</label>
+                            {{ skibidi }}
+                        </div>
+                    {% endfor %}
+                    <button class="bg-twicePink hover:bg-opacity-85 w-72 text-white font-bold py-3 px-2 mb-2 rounded" type="submit">Login</button>
+                    <a href="{% url 'register' %}" class="bg-reveluvWendy hover:bg-opacity-85 w-72 text-white font-bold py-3 block text-center px-2 mb-4 rounded">Register</a>
+                    <a href="{% url 'landing_page' %}" class="bg-red-400 hover:bg-opacity-85 w-72 text-white font-bold py-3 block text-center px-2 mb-4 rounded">Home</a>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+

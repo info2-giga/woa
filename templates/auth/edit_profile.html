@@ -1,0 +1,36 @@
+{% extends 'assets/base.html' %}
+{% load static %}
+{% block title %}
+    {{ user_profile.username }}'s Profile
+{% endblock %}
+{% block content %}
+    <div class="max-w-2xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <h1 class="text-2xl font-bold mb-6">Edit Profile</h1>
+        <form method="POST" enctype="multipart/form-data" class="space-y-6 bg-gray-300 shadow rounded-md p-6">
+            {% csrf_token %}
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Profile Picture</label>
+                {{ form.profile_image }}
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Bio</label>
+                {{ form.bio }}
+            </div>
+            <button type="submit"
+                    class="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
+                Save Changes
+            </button>
+            {% if messages %}
+                <ul class="mb-4">
+                    {% for message in messages %}
+                        <li class="text-sm text-{{ message.tags }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </form>
+        <a href="{% url 'profile_view' user.username %}"
+           class="block px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 text-center">
+           Cancel
+        </a>
+    </div>
+{% endblock %}
